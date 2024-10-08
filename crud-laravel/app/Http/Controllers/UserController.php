@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users_create');
+        return view('user_create');
     }
 
     /**
@@ -37,15 +37,24 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        var_dump('store user');
+        $created = $this->user->create([
+        'primeiro_nome' => $request->input('primeiro_nome'),
+        'sobrenome' => $request->input('sobrenome')
+        ]);
+
+        if ($created) {
+            return redirect()->back()->with('message', 'successfully created');
+        }
+
+        return redirect()->back()->with('message', 'Error');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(user $user)
     {
-        //
+        return view('user_show', ['user' => $user]);
     }
 
     /**
@@ -75,6 +84,8 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->user->where('id', $id)->delete();
+
+        return redirect()->route('users.index');
     }
 }
